@@ -42,8 +42,7 @@ It supports biomedical machine learning tasks with different types of data.
 We believe the FTL framework provides an easy-to-learn tool for researchers to study machine learning tasks of 
 different biomedical data with privacy protection and good performance. The FTL framework will be open-sourced soon. 
 
-![Federated Transfer Learning Framework architecture]
-(https://github.com/DashanGao/Federated-Transfer-Leraning-for-EEG/blob/master/imgs/ftl_framework.png)
+![Federated Transfer Learning Framework architecture](https://github.com/DashanGao/Federated-Transfer-Leraning-for-EEG/blob/master/imgs/ftl_framework.png)
 
 ---
 
@@ -66,12 +65,10 @@ If this project helps you in your research, please cite our work in your paper.
 
 This work is conducted by Hong Kong University of Science and Technology (HKUST), Southern University of Science and Technology (SUSTech), WeBank Co. Ltd. and Nanyang Technology University (NTU).
 
-![Institution Logo]
-(https://github.com/DashanGao/Federated-Transfer-Leraning-for-EEG/blob/master/imgs/institution_logo.png)
+![Institution Logo](https://github.com/DashanGao/Federated-Transfer-Leraning-for-EEG/blob/master/imgs/institution_logo.png)
 
 The authors are
 
-![Authors]
-(https://github.com/DashanGao/Federated-Transfer-Leraning-for-EEG/blob/master/imgs/authors_embc2020.png)
+![Authors](https://github.com/DashanGao/Federated-Transfer-Leraning-for-EEG/blob/master/imgs/authors_embc2020.png)
 
 
