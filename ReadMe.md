@@ -17,6 +17,8 @@ While avoiding the actual data sharing, our FTL approach achieves 2% higher clas
 subject-adaptive analysis. Also, in the absence of multi-subject data, our architecture provides 6% better accuracy 
 compared to other state-of-the-art DL architectures.
 
+![Federated Learning](https://github.com/DashanGao/Federated-Transfer-Leraning-for-EEG/blob/master/imgs/federated_learning.png)![Federated Learning EEG](https://github.com/DashanGao/Federated-Transfer-Leraning-for-EEG/blob/master/imgs/federated_learning_eeg.png)
+
 ---
 
 ## How To Run The Code
