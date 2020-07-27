@@ -44,3 +44,5 @@ If this project helps you in your research, please cite our work in your paper.
   year={2020}
 }
 ```
+
+This work is conducted by Hong Kong University of Science and Technology (HKUST), Southern University of Science and Technology (SUSTech), WeBank Co. Ltd., 
