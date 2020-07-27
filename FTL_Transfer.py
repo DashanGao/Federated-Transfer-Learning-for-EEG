@@ -9,14 +9,12 @@
 import numpy as np
 import model
 from MMD_loss import MMD_loss
-import matplotlib
 import torch
 from torch.autograd import Variable
 import torch.nn.functional as F
 import warnings
 
 warnings.filterwarnings('ignore')
-matplotlib.use('Agg')
 
 
 def transfer_SPD(cov_data_1, cov_data_2, labels_1, labels_2):
@@ -138,22 +136,22 @@ if __name__ == '__main__':
 
     data = np.load('raw_data/normalized_original_train_sample.npy')
     label = np.load('raw_data/train_label.npy')
+    GOOD_SUBJECT_IDS = [0, 1, 6, 7, 14, 28, 30, 32, 33, 34, 41, 47, 51, 53, 54, 55, 59, 61, 69, 70, 71, 72,
+                                     79, 84, 85, 92, 99, 103]
 
     # Good Subject
-    cov_data_1 = np.concatenate(data[
-                                    [0, 1, 6, 7, 14, 28, 30, 32, 33, 34, 41, 47, 51, 53, 54, 55, 59, 61, 69, 70, 71, 72,
-                                     79, 84, 85, 92, 99, 103]], axis=0)
-    labels_1 = np.concatenate(label[[0, 1, 6, 7, 14, 28, 30, 32, 33, 34, 41, 47, 51, 53, 54, 55, 59, 61, 69, 70, 71, 72,
-                                     79, 84, 85, 92, 99, 103]], axis=0)
+    cov_data_1 = np.concatenate(data[GOOD_SUBJECT_IDS], axis=0)
+    labels_1 = np.concatenate(label[GOOD_SUBJECT_IDS], axis=0)
 
     # Bad Subject
     cov_data_2 = data[100]
     labels_2 = label[100]
 
-    accuracy = []
+    accuracy_recorder = []
 
     for _ in range(10):
-        accuracy.append(transfer_SPD(cov_data_1, cov_data_2, labels_1, labels_2))
+        accuracy = transfer_SPD(cov_data_1, cov_data_2, labels_1, labels_2)
+        accuracy_recorder.append(accuracy)
 
-    print('All Accuracy: ', accuracy)
-    print('SPD Riemannian Average Classification Accuracy: {:4f}.'.format(np.array(accuracy).mean()))
+    print('All Accuracy: ', accuracy_recorder)
+    print('SPD Riemannian Average Classification Accuracy: {:4f}.'.format(np.array(accuracy_recorder).mean()))
