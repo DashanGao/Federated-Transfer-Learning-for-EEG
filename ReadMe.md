@@ -4,11 +4,10 @@ Authors: Ce Ju, Dashan Gao, Ravikiran Mane, Ben Tan, Yang Liu and Cuntai Guan
 ---
 
 ## Introduction
-<img src="https://github.com/DashanGao/Federated-Transfer-Leraning-for-EEG/blob/master/imgs/federated_learning.png" style="zoom:50%" />
-<img src="https://github.com/DashanGao/Federated-Transfer-Leraning-for-EEG/blob/master/imgs/federated_learning_eeg.png" style="zoom:50%" />
 
+<img src="https://github.com/DashanGao/Federated-Transfer-Leraning-for-EEG/blob/master/imgs/federated_learning.png" style="zoom:20%" />
+<img src="https://github.com/DashanGao/Federated-Transfer-Leraning-for-EEG/blob/master/imgs/federated_learning_eeg.png" style="zoom:20%" />
 
-![Federated Learning](https://github.com/DashanGao/Federated-Transfer-Leraning-for-EEG/blob/master/imgs/federated_learning.png){:height="50%" width="50%"}![Federated Learning EEG](https://github.com/DashanGao/Federated-Transfer-Leraning-for-EEG/blob/master/imgs/federated_learning_eeg.png){:height="50%" width="50%"}
 
 The success of deep learning (DL) methods in the Brain-Computer Interfaces (BCI) field for classification of 
 electroencephalographic (EEG) recordings have been restricted by the lack of large datasets. Privacy concerns 
