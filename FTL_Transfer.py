@@ -5,6 +5,7 @@
 ##Paper : Ce Ju et al., Federated Transfer Learning for EEG Signal Classification, IEEE EMBS 2020.
 #Description: Source domain inlcudes all good subjects, target domain is the bad subject.
 ##################################################################################################
+
 import numpy as np
 from numpy.linalg import matrix_rank
 import random
