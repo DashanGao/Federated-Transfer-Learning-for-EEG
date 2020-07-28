@@ -1,6 +1,7 @@
 import torch
 from torch.autograd import Variable
 import spd_net_util as util
+import torch.nn.functional as F
 
 
 class SPDNetwork(torch.nn.Module):
@@ -107,8 +108,8 @@ class SPDNetwork_1(torch.nn.Module):
 
         feat = X_3.view([batch_size, -1])  # [batch_size, d]
         logits = torch.matmul(feat, self.fc_w)  # [batch_size, num_class]
-
-        return logits, feat
+        output = F.log_softmax(logits, dim=-1)
+        return output, feat
 
     def update_para(self, lr):
         egrad_w1 = self.w_1_p.grad.data.numpy()
@@ -176,8 +177,8 @@ class SPDNetwork_2(torch.nn.Module):
 
         feat = X_3.view([batch_size, -1])  # [batch_size, d]
         logits = torch.matmul(feat, self.fc_w)  # [batch_size, num_class]
-
-        return logits, feat
+        output = F.log_softmax(logits, dim=-1)
+        return output, feat
 
     def update_para(self, lr):
         egrad_w1 = self.w_1_p.grad.data.numpy()
