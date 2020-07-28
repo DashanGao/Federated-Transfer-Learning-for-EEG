@@ -5,29 +5,19 @@
 # Paper : Ce Ju et al., Federated Transfer Learning for EEG Signal Classification, IEEE EMBS 2020.
 # Description: Test on all 108 subjects with all baselines.
 ##################################################################################################
-import numpy as np
-import random
-import h5py
-import os
-import model
-from torch.autograd import Variable
-import torch
+import warnings
 import datetime
+import numpy as np
+import torch
+from torch.autograd import Variable
 import torch.nn.functional as F
-import matplotlib
-
-matplotlib.use('Agg')
-
 from mne.decoding import CSP
-
 # pyriemann import
 from pyriemann.classification import MDM, TSclassifier, FgMDM
-from sklearn.model_selection import cross_val_score, KFold
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
 from sklearn import svm
 
-import warnings
 
 warnings.filterwarnings('ignore')
 
@@ -82,7 +72,7 @@ if __name__ == '__main__':
     data = np.load('raw_data/normalized_original_train_sample.npy')
     epoch_data_train = np.load('raw_data/normalized_original_epoch_data_train.npy')
     label = np.load('raw_data/train_label.npy')
-    index = np.load('index.npy')
+    index = np.load('raw_data/index.npy')
 
     # good_subject_index =[0, 1, 6, 7, 14, 28, 30, 32, 33, 34, 41, 47, 51, 53, 54, 55, 59, 61, 69, 70, 71, 72, 79, 84, 85, 92, 103]
     # cov_data_good = np.concatenate(data[good_subject_index], axis=0)

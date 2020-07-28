@@ -7,25 +7,10 @@ class SPDNetwork(torch.nn.Module):
 
     def __init__(self):
         super(SPDNetwork, self).__init__()
-        # tmp = sio.loadmat('./tmp/afew/w_1.mat')['w_1']
-        # self.w_1_p = Variable(torch.from_numpy(tmp), requires_grad=True)
         self.w_1_p = Variable(torch.randn(32, 4).double(), requires_grad=True)
-        # print('w1.shape: ', tmp.shape)
-
-        # tmp = sio.loadmat('./tmp/afew/w_2.mat')['w_2']
-        # self.w_2_p = Variable(torch.from_numpy(tmp), requires_grad=True)
         self.w_2_p = Variable(torch.randn(4, 4).double(), requires_grad=True)
-        # print('w2.shape: ', tmp.shape)
-
-        # tmp = sio.loadmat('./tmp/afew/w_3.mat')['w_3']
-        # self.w_3_p = Variable(torch.from_numpy(tmp), requires_grad=True)
         self.w_3_p = Variable(torch.randn(4, 4).double(), requires_grad=True)
-        # print('w3.shape: ', tmp.shape)
-
-        # tmp = sio.loadmat('./tmp/afew/fc.mat')['theta']
-        # self.fc_w = Variable(torch.from_numpy(tmp.astype(np.float64)), requires_grad=True)
         self.fc_w = Variable(torch.randn(16, 2).double(), requires_grad=True)
-        # print('fc.shape: ', tmp.shape)
 
     def forward(self, input):
         batch_size = input.shape[0]
@@ -66,11 +51,6 @@ class SPDNetwork(torch.nn.Module):
         new_w_3 = util.update_para_riemann(w_3_np, egrad_w3, lr)
         new_w_2 = util.update_para_riemann(w_2_np, egrad_w2, lr)
         new_w_1 = util.update_para_riemann(w_1_np, egrad_w1, lr)
-
-        # print(np.sum(w_1_np))
-        # print(np.sum(np.square(w_3_np - new_w_3)))
-        # print(np.sum(np.square(w_2_np - new_w_2)))
-        # print(np.sum(np.square(w_1_np - new_w_1)))
 
         self.w_1_p.data.copy_(torch.DoubleTensor(new_w_1))
         self.w_2_p.data.copy_(torch.DoubleTensor(new_w_2))
