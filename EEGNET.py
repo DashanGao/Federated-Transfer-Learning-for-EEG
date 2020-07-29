@@ -1,6 +1,8 @@
 ##################################################################################################
-# Draft Code
-# Author：CE JU
+# Train EEG signal classifier using EEGNet as baseline.
+# Author：Ce Ju, Dashan Gao
+# Date  : July 29, 2020
+# Paper : Ce Ju et al., Federated Transfer Learning for EEG Signal Classification, IEEE EMBS 2020.
 ##################################################################################################
 
 import numpy as np
@@ -14,8 +16,7 @@ warnings.filterwarnings('ignore')
 np.random.seed(0)
 
 
-# %% EEGNet Baseline 2
-class eegNet(nn.Module):
+class EEGNet(nn.Module):
     '''
     EEGNet architecture:
         The expected input during runtime is in a formate:
@@ -26,12 +27,35 @@ class eegNet(nn.Module):
             nClasses: number of classes
     '''
 
-    def initialBlocks(self, dropoutP, *args, **kwargs):
+    def __init__(self, n_chan, n_time, n_class=2,
+                 dropoutP=0.25, F1=4, D=2,
+                 C1=100, *args, **kwargs):
+        super(EEGNet, self).__init__()
+        self.F2 = D * F1
+        self.F1 = F1
+        self.D = D
+        self.n_time = n_time
+        self.n_class = n_class
+        self.n_chan = n_chan
+        self.C1 = C1
+
+        self.first_blocks = self.initial_blocks(dropoutP)
+        self.f_size = self.calculateOutSize(self.first_blocks, n_chan, n_time)
+        self.last_layer = self.lastBlock(self.F2, n_class, (1, self.f_size[1]))
+
+    def forward(self, x):
+        x = self.first_blocks(x)
+        x = self.last_layer(x)
+        x = torch.squeeze(x, 3)
+        x = torch.squeeze(x, 2)
+        return x
+
+    def initial_blocks(self, dropoutP, *args, **kwargs):
         block1 = nn.Sequential(
             nn.Conv2d(1, self.F1, (1, self.C1),
                       padding=(0, self.C1 // 2), bias=False),
             nn.BatchNorm2d(self.F1),
-            Conv2dWithConstraint(self.F1, self.F1 * self.D, (self.nChan, 1),
+            Conv2dWithConstraint(self.F1, self.F1 * self.D, (self.n_chan, 1),
                                  padding=0, bias=False, max_norm=1,
                                  groups=self.F1),
             nn.BatchNorm2d(self.F1 * self.D),
@@ -66,30 +90,6 @@ class eegNet(nn.Module):
         out = model(data).shape
         return out[2:]
 
-    def __init__(self, nChan, nTime, nClass=2,
-                 dropoutP=0.25, F1=4, D=2,
-                 C1=100, *args, **kwargs):
-        super(eegNet, self).__init__()
-        self.F2 = D * F1
-        self.F1 = F1
-        self.D = D
-        self.nTime = nTime
-        self.nClass = nClass
-        self.nChan = nChan
-        self.C1 = C1
-
-        self.firstBlocks = self.initialBlocks(dropoutP)
-        self.fSize = self.calculateOutSize(self.firstBlocks, nChan, nTime)
-        self.lastLayer = self.lastBlock(self.F2, nClass, (1, self.fSize[1]))
-
-    def forward(self, x):
-        x = self.firstBlocks(x)
-        x = self.lastLayer(x)
-        x = torch.squeeze(x, 3)
-        x = torch.squeeze(x, 2)
-
-        return x
-
 
 class Conv2dWithConstraint(nn.Conv2d):
     def __init__(self, *args, max_norm=1, **kwargs):
@@ -103,12 +103,16 @@ class Conv2dWithConstraint(nn.Conv2d):
         return super(Conv2dWithConstraint, self).forward(x)
 
 
-def EEGNet_experients(cov_data, labels, index, fold, subject):
-    # import model
-
-    # random_index = np.arange(cov_data.shape[0])
-    # np.random.shuffle(random_index)
-
+def EEGNet_local_training_experients(cov_data, labels, index, fold, subject):
+    """
+    Conduct model training based on EEGNet
+    :param cov_data: training data
+    :param labels: training labels
+    :param index:
+    :param fold:
+    :param subject: subject id
+    :return:
+    """
     cov_data_train = cov_data[index != fold].reshape(
         (cov_data[index != fold].shape[0], 1, cov_data[index != fold].shape[1], cov_data[index != fold].shape[2]))
     cov_data_test = cov_data[index == fold].reshape(
@@ -119,7 +123,7 @@ def EEGNet_experients(cov_data, labels, index, fold, subject):
     target_train = Variable(torch.LongTensor(labels[index != fold]))
     target_test = Variable(torch.LongTensor(labels[index == fold]))
 
-    model = eegNet(nChan=32, nTime=161)
+    model = EEGNet(nChan=32, nTime=161)
 
     lr = 0.1
     old_loss = 1000
@@ -175,7 +179,7 @@ if __name__ == '__main__':
         for fold in range(1, 6):
             cov_data_subject = data[subject]
             label_subject = label[subject]
-            accuracy.append(EEGNet_experients(cov_data_subject, label_subject, index[subject], fold, subject))
+            accuracy.append(EEGNet_local_training_experients(cov_data_subject, label_subject, index[subject], fold, subject))
         all_accuracy.append(np.mean(np.array(accuracy)))
         print('Subject {} Average {:6f}'.format(subject, np.mean(np.array(accuracy))))
 

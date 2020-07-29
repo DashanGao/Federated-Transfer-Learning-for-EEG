@@ -477,19 +477,18 @@ def update_para_riemann(X, U, t):
 
 
 def cal_riemann_grad(X, U):
-    '''
-
+    """
+    Calculate Riemann gradient.
     :param X: the parameter
     :param U: the eculidean gradient
     :return: the riemann gradient
-    '''
+    """
     # XtU = X'*U;
-    # symXtU = 0.5 * (XtU + XtU');
-    # Up = U - X * symXtU;
     XtU = np.matmul(np.transpose(X), U)
+    # symXtU = 0.5 * (XtU + XtU');
     symXtU = 0.5 * (XtU + np.transpose(XtU))
+    # Up = U - X * symXtU;
     Up = U - np.matmul(X, symXtU)
-
     return Up
 
 

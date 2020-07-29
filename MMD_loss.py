@@ -1,4 +1,9 @@
+##################################################################################################
 # Compute MMD distance using pytorch
+# Author：Ce Ju, Dashan Gao
+# Date  : July 29, 2020
+# Paper : Ce Ju et al., Federated Transfer Learning for EEG Signal Classification, IEEE EMBS 2020.
+##################################################################################################
 
 import torch
 import torch.nn as nn

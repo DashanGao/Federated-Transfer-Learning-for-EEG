@@ -179,7 +179,11 @@ if __name__ == '__main__':
 
     GOOD_SUBJECT_IDS = [0, 1, 6, 7, 14, 28, 30, 32, 33, 34, 41, 47, 51, 53, 54, 55, 59, 61, 69, 70, 71, 72,
                         79, 84, 85, 92, 99, 103]
-    BAD_SUBJECT_ID = 100
+
+    # Train a model using federated transfer learning to boost the performance of one bad subject.
+    # bad_subject_index = [2, 8, 16, 17, 22, 23, 27, 35, 37, 38, 39, 40, 44, 46, 57, 62, 63, 66, 73, 75, 76, 77, 89,
+    # 95, 96, 98, 100, 101]
+    BAD_SUBJECT_ID = 100  # Select a bad subject ID here.
 
     # Load data of good subjects and bad subjects.
     good_subj_data, good_subj_label, bad_subj_data, bad_subj_label = \

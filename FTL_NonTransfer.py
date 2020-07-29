@@ -1,9 +1,9 @@
 ##################################################################################################
-# FTL Draft Code for Subject-adaptive Analysis
+# FTL Draft Code for Subject-local Analysis
 # Author：Ce Ju, Dashan Gao
 # Date  : July 29, 2020
 # Paper : Ce Ju et al., Federated Transfer Learning for EEG Signal Classification, IEEE EMBS 2020.
-# Description: Source domain inlcudes all good subjects, target domain is the bad subject.
+# Description: One subject(participant) locally train an SPDNetwork for EEG signal classification using its own data.
 ##################################################################################################
 
 
@@ -70,6 +70,7 @@ def SPD_experients(cov_data, labels):
 
 if __name__ == '__main__':
 
+    # Load data.
     data = np.load('raw_data/normalized_original_train_sample.npy')
     epoch_data_train = np.load('raw_data/normalized_original_epoch_data_train.npy')
     label = np.load('raw_data/train_label.npy')
