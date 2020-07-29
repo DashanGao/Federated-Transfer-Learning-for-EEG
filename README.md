@@ -51,6 +51,8 @@ mne: https://github.com/mne-tools/mne-python
 
 The SPD-Net part is originally from https://github.com/YirongMao/SPDNet
 
+Please put your training data and labels into a directory "raw_data/" in this project.
+
 For subject-adaptive analysis, run `SPDNet_Federated_Transfer_Learning.py `
 
 For subject-specific analysis, run `SPDNet_Local_Learning.py`
