@@ -21,6 +21,27 @@ compared to other state-of-the-art DL architectures.
 
 ---
 
+## Network Architecture
+
+Our proposed architecture consists of following 4 layers:
+manifold reduction layer, common embedded space, tangent projection layer and federated layer. 
+The purpose of each layer is as follows:
+
+1. **Manifold reduction layer**: Spatial covariance matrices are always assumed to be on the high-dimensional 
+SPD manifolds. This layer is the linear map from the high-dimensional SPD manifold to the low-dimensional one 
+with undetermined weights for learning.
+
+2. **Common embedded space**: The common space is the low-dimensional SPD manifold whose elements are reduced from 
+each high-dimensional SPD manifolds, which is designed only for the transfer learning setting.
+
+3. **Tangent projection layer**: This layer is to project the matrices on SPD manifolds to its tangent space, 
+which is a local linear approximation of the curved space.
+
+4. **Federated layer**: Deep neural networks are implemented in this layer. For the transfer learning setting, 
+parameters of neural networks are updated by the federated aggregation.
+
+---
+
 ## How To Run The Code
 
 Please install pyRiemann and mne
@@ -33,28 +54,6 @@ The SPD-Net part is originally from https://github.com/YirongMao/SPDNet
 For subject-adaptive analysis, run `SPDNet_Federated_Transfer_Learning.py `
 
 For subject-specific analysis, run `SPDNet_Local_Learning.py`
-
-
----
-
-## Network Architecture
-
-Our proposed architecture consists of following 4 layers:
-manifold reduction layer, common embedded space, tangent projection layer and federated layer. 
-The purpose of each layer is as follows:
-
-1. **Manifold reduction layer**: Spatial covariance matri- ces are always assumed to be on the high-dimensional 
-SPD manifolds. This layer is the linear map from the high-dimensional SPD manifold to the low-dimensional one 
-with undetermined weights for learning.
-
-2. **Common embedded space**: The common space is the low-dimensional SPD manifold whose elements are reduced from 
-each high-dimensional SPD manifolds, which is designed only for the transfer learning setting.
-
-3. **Tangent projection layer**: This layer is to project the matrices on SPD manifolds to its tangent space, 
-which is a local linear approximation of the curved space.
-
-4. **Federated layer**: Deep neural networks are imple- mented in this layer. For the transfer learning setting, 
-parameters of neural networks are updated by the federated aggregation.
 
 ---
 
