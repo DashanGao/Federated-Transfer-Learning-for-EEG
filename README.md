@@ -1,6 +1,9 @@
 # Federated Transfer Learning For EEG Signal Classification
 Authors: Ce Ju, Dashan Gao, Ravikiran Mane, Ben Tan, Yang Liu and Cuntai Guan
 
+Published in: 42nd Annual International Conferences of the IEEE Engineering in Medicine and Biology Society in 
+conjunction with the 43rd Annual Conference of the Canadian Medical and Biological Engineering Society (EMBS)
+July 20-24, 2020 via the EMBS Virtual Academy
 ---
 
 ## Introduction
@@ -71,7 +74,10 @@ different biomedical data with privacy protection and good performance. The FTL 
 
 ---
 
-For detailed information about our work, please refer to our paper published in EMBC 2020: 
+For detailed information about our work, please refer to our paper published in 42nd Annual International Conferences 
+of the IEEE Engineering in Medicine and Biology Society in conjunction with the 43rd Annual Conference of the Canadian 
+Medical and Biological Engineering Society (EMBS)
+July 20-24, 2020 via the EMBS Virtual Academy: 
 
 [Federated Transfer Learning for EEG Signal Classification](https://arxiv.org/abs/2004.12321)
 
@@ -94,6 +100,6 @@ This work is conducted by Hong Kong University of Science and Technology (HKUST)
 
 The authors are
 
-![Authors](https://github.com/DashanGao/Federated-Transfer-Leraning-for-EEG/blob/master/imgs/authors_embc2020.png)
+![Authors](https://github.com/DashanGao/Federated-Transfer-Leraning-for-EEG/blob/master/imgs/authors_embc.png)
 
 
