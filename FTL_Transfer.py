@@ -20,13 +20,13 @@ warnings.filterwarnings('ignore')
 def transfer_SPD(cov_data_1, cov_data_2, labels_1, labels_2):
     np.random.seed(0)
 
-    # Shuffle data
+    # 1. Shuffle data
 
     cov_data_1, labels_1 = shuffle_data(cov_data_1, labels_1)
     cov_data_2, labels_2 = shuffle_data(cov_data_2, labels_2)
     print(cov_data_1.shape, cov_data_2.shape)
 
-    # Train test split
+    # 2. Train test split
     train_data_1_num = cov_data_1.shape[0]
     cov_data_train_1 = cov_data_1[0:cov_data_1.shape[0], :, :]
 
@@ -38,7 +38,7 @@ def transfer_SPD(cov_data_1, cov_data_2, labels_1, labels_2):
     print('rest_num_for_test: ', labels_2.shape[0] - train_data_2_num)
     print('-------------------------------------------------------')
 
-    # Convert training data to torch variables.
+    # 3. Convert training data to torch variables.
     data_train_1 = Variable(torch.from_numpy(cov_data_train_1)).double()
     data_train_2 = Variable(torch.from_numpy(cov_data_train_2)).double()
     data_test_2 = Variable(torch.from_numpy(cov_data_test_2)).double()
@@ -47,7 +47,7 @@ def transfer_SPD(cov_data_1, cov_data_2, labels_1, labels_2):
     target_train_2 = Variable(torch.LongTensor(labels_2[0:train_data_2_num]))
     target_test_2 = Variable(torch.LongTensor(labels_2[train_data_2_num:labels_2.shape[0]]))
 
-    # Initialize Model
+    # 4. Initialize Model
     model_1 = model.SPDNetwork_1()
     model_2 = model.SPDNetwork_2()
 
@@ -60,11 +60,11 @@ def transfer_SPD(cov_data_1, cov_data_2, labels_1, labels_2):
         output_1, feat_1 = model_1(data_train_1)
         output_2, feat_2 = model_2(data_train_2)
 
-        # Index of positive/negative labels
+        # 1. Index of positive/negative labels
         feat_1_positive, feat_1_negative = split_class_feat(feat_1, target_train_1)
         feat_2_positive, feat_2_negative = split_class_feat(feat_2, target_train_2)
 
-        # MMD knowledge transfer
+        # 2. MMD knowledge transfer via MMD loss
         mmd = MMD_loss('rbf', kernel_mul=2.0)
 
         loss = F.nll_loss(output_1, target_train_1) + F.nll_loss(output_2, target_train_2) + \
@@ -73,15 +73,18 @@ def transfer_SPD(cov_data_1, cov_data_2, labels_1, labels_2):
 
         loss.backward()
 
-        # Federated Averaging for model update
-        grad_1 = model_1.update_para(lr_1)
-        grad_2 = model_2.update_para(lr_2)
-        average_grad = (grad_1 + grad_2) / 2
+        # 3. Update local model components.
+        model_1.update_para(lr_1)
+        model_2.update_para(lr_2)
 
+        # 4. Compute the average of global component.
+        average_grad = (model_1.fc_w.grad.data + model_2.fc_w.grad.data) / 2
+
+        # 5. Update local model of each participant.
         model_1.second_update_para(lr, average_grad)
         model_2.second_update_para(lr, average_grad)
 
-        # Evaluate model performance
+        # 6. Evaluate model performance
         if iteration % 1 == 0:
             # Accuracy of two models
             pred_1 = output_1.data.max(1, keepdim=True)[1]
@@ -102,11 +105,12 @@ def transfer_SPD(cov_data_1, cov_data_2, labels_1, labels_2):
             test_accuracy_2 = pred_2.eq(target_test_2.data.view_as(pred_2)).long().cpu().sum().float() / pred_2.shape[0]
             print('Testing Accuracy for Model 2: {:.4f}'.format(test_accuracy_2))
 
+        # 7. Check stopping criteria
         if np.abs(loss.item() - old_loss) < 1e-4:
             break
         old_loss = loss.item()
 
-        # Update learning rates
+        # 8. Update learning rates
         if iteration % 50 == 0:
             lr = max(0.98 * lr, 0.01)
             lr_1 = max(0.98 * lr_1, 0.01)
