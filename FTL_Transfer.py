@@ -6,13 +6,13 @@
 # Description: Source domain inlcudes all good subjects, target domain is the bad subject.
 ##################################################################################################
 
+import warnings
 import numpy as np
-import model
-from MMD_loss import MMD_loss
 import torch
 from torch.autograd import Variable
 import torch.nn.functional as F
-import warnings
+import FTL_model
+from MMD_loss import MMD
 
 warnings.filterwarnings('ignore')
 
@@ -54,8 +54,8 @@ def transfer_SPD(cov_data_1, cov_data_2, labels_1, labels_2):
     target_test_2 = Variable(torch.LongTensor(labels_2[train_data_2_num:labels_2.shape[0]]))
 
     # 4. Initialize Model
-    model_1 = model.SPDNetwork_1()
-    model_2 = model.SPDNetwork_2()
+    model_1 = FTL_model.SPDNetwork_1()
+    model_2 = FTL_model.SPDNetwork_2()
 
     # Start training
     old_loss = 0
@@ -71,7 +71,7 @@ def transfer_SPD(cov_data_1, cov_data_2, labels_1, labels_2):
         feat_2_positive, feat_2_negative = split_class_feat(feat_2, target_train_2)
 
         # 2. MMD knowledge transfer via MMD loss
-        mmd = MMD_loss('rbf', kernel_mul=2.0)
+        mmd = MMD('rbf', kernel_mul=2.0)
 
         loss = F.nll_loss(output_1, target_train_1) + F.nll_loss(output_2, target_train_2) + \
                1 * mmd.forward(feat_1_positive, feat_2_positive) + \

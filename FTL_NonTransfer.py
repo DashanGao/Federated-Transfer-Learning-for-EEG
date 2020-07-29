@@ -20,12 +20,11 @@ from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
 from sklearn import svm
 
-
 warnings.filterwarnings('ignore')
 
 
 def SPD_experients(cov_data, labels):
-    import model
+    import FTL_model
 
     random_index = np.arange(cov_data.shape[0])
     np.random.shuffle(random_index)
@@ -46,7 +45,7 @@ def SPD_experients(cov_data, labels):
     target_train = Variable(torch.LongTensor(labels[0:split_num]))
     target_test = Variable(torch.LongTensor(labels[split_num:labels.shape[0]]))
 
-    model = model.SPDNetwork_2()
+    model = FTL_model.SPDNetwork_2()
 
     for _ in range(500):
         stime = datetime.datetime.now()

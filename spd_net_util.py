@@ -1,8 +1,6 @@
 import torch
 from torch.autograd import Function
-from torch.autograd import Variable
 import numpy as np
-from torch.nn.modules.module import Module
 
 
 class SVD_opt(Function):
@@ -60,7 +58,7 @@ class RecFunction_v2(Function):
             max_Id = torch.ge(S, eps).float()
             # res = torch.matmul(U, torch.matmul(torch.diag(max_S), torch.transpose(U, 0, 1)))
             # result[i, :, :] = res
-            Ss[i, :]=S
+            Ss[i, :] = S
             Us[i, :, :] = U
             max_Ss[i, :, :] = torch.diag(max_S)
             max_Ids[i, :, :] = torch.diag(max_Id)
@@ -104,6 +102,8 @@ class RecFunction_v2(Function):
         grad = torch.matmul(self.Us, torch.matmul(tmp, Ut))  # checked
 
         return grad
+
+
 class LogFunction_v2(Function):
     def forward(self, input):
         Us = torch.zeros_like(input)
@@ -116,7 +116,7 @@ class LogFunction_v2(Function):
             Ss[i, :] = S
             Us[i, :, :] = U
             logSs[i, :, :] = torch.diag(torch.log(S))
-            invSs[i, :, :] = torch.diag(1.0/S)
+            invSs[i, :, :] = torch.diag(1.0 / S)
 
         result = torch.matmul(Us, torch.matmul(logSs, torch.transpose(Us, 1, 2)))
         self.Us = Us
@@ -131,7 +131,7 @@ class LogFunction_v2(Function):
         Ks = torch.zeros_like(grad_output)
 
         dLdC = grad_output
-        dLdC = 0.5 * (dLdC + torch.transpose(dLdC, 1, 2)) # checked
+        dLdC = 0.5 * (dLdC + torch.transpose(dLdC, 1, 2))  # checked
 
         Ut = torch.transpose(self.Us, 1, 2)
 
@@ -205,7 +205,6 @@ class LogFunction_v0(Function):
             K = 1.0 / (vs_1 - vs_2)
             # K.masked_fill(mask_diag, 0.0)
             K[K >= float("Inf")] = 0.0
-
 
             tmp = torch.transpose(K, 0, 1) * torch.matmul(Ut, dLdV)
             tmp = 0.5 * (tmp + torch.transpose(tmp, 0, 1)) + torch.diag(torch.diag(dLdS))
@@ -297,7 +296,7 @@ class RecFunction_v0(Function):
             max_Id = torch.ge(S, eps)
             # res = torch.matmul(U, torch.matmul(torch.diag(max_S), torch.transpose(U, 0, 1)))
             # result[i, :, :] = res
-            Ss[i, :]=S
+            Ss[i, :] = S
             Us[i, :, :] = U
             max_Ss[i, :, :] = torch.diag(max_S)
             max_Ids[i, :, :] = torch.diag(max_Id)
@@ -387,7 +386,6 @@ class RecFunction(Function):
         if np_grad_output.dtype != np.float64:
             np_grad_output = np_grad_output.astype(np.float64)
 
-
         u, s, v = np.linalg.svd(numpy_input)
         eps = 0.0001
         max_s = np.maximum(s, eps)
@@ -415,10 +413,16 @@ class RecFunction(Function):
             grad[i, :, :] = dzdx
 
         return torch.DoubleTensor(grad)
+
+
 def rec_mat(input):
     return RecFunction()(input)
+
+
 def log_mat(input):
     return LogFunction()(input)
+
+
 def cal_riemann_grad_torch(X, U):
     '''
 
@@ -426,18 +430,18 @@ def cal_riemann_grad_torch(X, U):
     :param U: the eculidean gradient
     :return: the riemann gradient
     '''
-    #-- Matlab code
+    # -- Matlab code
     # XtU = X'*U;
     # symXtU = 0.5 * (XtU + XtU');
     # Up = U - X * symXtU;
 
-    #-- numpy code
+    # -- numpy code
     # XtU = np.matmul(np.transpose(X), U)
     # symXtU = 0.5*(XtU + np.transpose(XtU))
     # Up = U - np.matmul(X, symXtU)
 
     XtU = torch.matmul(torch.transpose(X, 0, 1), U)
-    symXtU = 0.5*(XtU + torch.transpose(XtU, 0, 1))
+    symXtU = 0.5 * (XtU + torch.transpose(XtU, 0, 1))
     Up = U - torch.matmul(X, symXtU)
     return Up
 
@@ -461,7 +465,7 @@ def cal_retraction_torch(X, rU, t):
     # sR = np.diag(np.sign(np.diag(R)))
     # Y = np.matmul(Q, sR)
 
-    Y = X - t*rU
+    Y = X - t * rU
 
     return Y
 
@@ -483,7 +487,7 @@ def cal_riemann_grad(X, U):
     # symXtU = 0.5 * (XtU + XtU');
     # Up = U - X * symXtU;
     XtU = np.matmul(np.transpose(X), U)
-    symXtU = 0.5*(XtU + np.transpose(XtU))
+    symXtU = 0.5 * (XtU + np.transpose(XtU))
     Up = U - np.matmul(X, symXtU)
 
     return Up
@@ -500,7 +504,7 @@ def cal_retraction(X, rU, t):
     # Y = X + t * U;
     # [Q, R] = qr(Y, 0);
     # Y = Q * diag(sign(diag(R)));
-    Y = X - t*rU
+    Y = X - t * rU
     Q, R = np.linalg.qr(Y, mode='reduced')
     sR = np.diag(np.sign(np.diag(R)))
     Y = np.matmul(Q, sR)

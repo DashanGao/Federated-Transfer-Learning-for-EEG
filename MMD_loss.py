@@ -4,9 +4,9 @@ import torch
 import torch.nn as nn
 
 
-class MMD_loss(nn.Module):
+class MMD(nn.Module):
     def __init__(self, kernel_type='rbf', kernel_mul=2.0, kernel_num=5):
-        super(MMD_loss, self).__init__()
+        super(MMD, self).__init__()
         self.kernel_num = kernel_num
         self.kernel_mul = kernel_mul
         self.fix_sigma = None
