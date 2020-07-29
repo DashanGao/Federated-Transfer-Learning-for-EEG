@@ -58,12 +58,12 @@ The SPD-Net part is originally from https://github.com/YirongMao/SPDNet
 
 Please put your training data and labels into a directory "raw_data/" in this project.
 
- ###############################################################################
+###############################################################################
         from mne import Epochs, pick_types, events_from_annotations
         from mne.io import concatenate_raws
         from mne.io.edf import read_raw_edf
         from mne.datasets import eegbci
-
+ 
         # Set parameters and read data
 
         # avoid classification of evoked responses by using epochs that start 1s after
