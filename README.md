@@ -28,10 +28,11 @@ Please install pyRiemann and mne
 pyRiemann: https://github.com/alexandrebarachant/pyRiemann
 mne: https://github.com/mne-tools/mne-python
 
-The SPD-Net part is original from https://github.com/YirongMao/SPDNet
+The SPD-Net part is originally from https://github.com/YirongMao/SPDNet
 
-For subject-adaptive analysis, run FTL_Transfer.py 
-For subject-specific analysis, run FTL_NonTransfer.py
+For subject-adaptive analysis, run `SPDNet_Federated_Transfer_Learning.py `
+
+For subject-specific analysis, run `SPDNet_Local_Learning.py`
 
 
 ---

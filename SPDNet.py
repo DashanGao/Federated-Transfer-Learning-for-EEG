@@ -8,7 +8,7 @@
 
 import torch
 from torch.autograd import Variable
-import spd_net_util as util
+import SPDNet_utils as util
 import torch.nn.functional as F
 
 torch.manual_seed(0)

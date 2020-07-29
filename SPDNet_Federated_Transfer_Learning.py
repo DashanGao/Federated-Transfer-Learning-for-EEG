@@ -11,7 +11,7 @@ import numpy as np
 import torch
 from torch.autograd import Variable
 import torch.nn.functional as F
-import FTL_model
+import SPDNet
 from MMD_loss import MMD
 
 warnings.filterwarnings('ignore')
@@ -54,8 +54,8 @@ def transfer_SPD(cov_data_1, cov_data_2, labels_1, labels_2):
     target_test_2 = Variable(torch.LongTensor(labels_2[train_data_2_num:labels_2.shape[0]]))
 
     # 4. Initialize Model
-    model_1 = FTL_model.SPDNetwork_1()
-    model_2 = FTL_model.SPDNetwork_2()
+    model_1 = SPDNet.SPDNetwork_1()
+    model_2 = SPDNet.SPDNetwork_2()
 
     # Start training
     old_loss = 0
