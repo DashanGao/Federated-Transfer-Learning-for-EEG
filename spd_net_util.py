@@ -4,6 +4,7 @@ from torch.autograd import Variable
 import numpy as np
 from torch.nn.modules.module import Module
 
+
 class SVD_opt(Function):
 
     def forward(self, input):
@@ -43,6 +44,8 @@ class SVD_opt(Function):
         grad = torch.matmul(self.Us, torch.matmul(tmp, Ut))  # checked
 
         return grad
+
+
 class RecFunction_v2(Function):
 
     def forward(self, input):
@@ -156,6 +159,8 @@ class LogFunction_v2(Function):
 
         # print('log_mat_v2 backward')
         return grad
+
+
 class LogFunction_v0(Function):
     def forward(self, input):
         Us = torch.zeros_like(input)
@@ -208,6 +213,8 @@ class LogFunction_v0(Function):
             grad[i, :, :] = dzdx
         # print('log_mat_v2 backward')
         return grad
+
+
 class LogFunction(Function):
 
     def forward(ctx, input):
@@ -274,6 +281,8 @@ class LogFunction(Function):
             grad[i, :, :] = dzdx  # checked
 
         return torch.DoubleTensor(grad)
+
+
 class RecFunction_v0(Function):
 
     def forward(self, input):
@@ -333,12 +342,20 @@ class RecFunction_v0(Function):
             grad[i, :, :] = dzdx
         # print('rec_mat_v2 backward')
         return grad
+
+
 def SVD_customed(input):
     return SVD_opt()(input)
+
+
 def rec_mat_v2(input):
     return RecFunction_v2()(input)
+
+
 def log_mat_v2(input):
     return LogFunction_v2()(input)
+
+
 class RecFunction(Function):
 
     # @staticmethod
@@ -423,6 +440,8 @@ def cal_riemann_grad_torch(X, U):
     symXtU = 0.5*(XtU + torch.transpose(XtU, 0, 1))
     Up = U - torch.matmul(X, symXtU)
     return Up
+
+
 def cal_retraction_torch(X, rU, t):
     """
 
@@ -444,12 +463,15 @@ def cal_retraction_torch(X, rU, t):
 
     Y = X - t*rU
 
-
     return Y
+
+
 def update_para_riemann(X, U, t):
     Up = cal_riemann_grad(X, U)
     new_X = cal_retraction(X, Up, t)
     return new_X
+
+
 def cal_riemann_grad(X, U):
     '''
 
@@ -465,6 +487,8 @@ def cal_riemann_grad(X, U):
     Up = U - np.matmul(X, symXtU)
 
     return Up
+
+
 def cal_retraction(X, rU, t):
     """
 

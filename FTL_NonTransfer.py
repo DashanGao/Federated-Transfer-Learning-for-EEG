@@ -1,10 +1,12 @@
 ##################################################################################################
-# FTL Draft Code for Subject-specific Analysis
-# Author：CE JU
-# Date  : April 20, 2020
+# FTL Draft Code for Subject-adaptive Analysis
+# Author：Ce Ju, Dashan Gao
+# Date  : July 29, 2020
 # Paper : Ce Ju et al., Federated Transfer Learning for EEG Signal Classification, IEEE EMBS 2020.
-# Description: Test on all 108 subjects with all baselines.
+# Description: Source domain inlcudes all good subjects, target domain is the bad subject.
 ##################################################################################################
+
+
 import warnings
 import datetime
 import numpy as np
@@ -44,7 +46,7 @@ def SPD_experients(cov_data, labels):
     target_train = Variable(torch.LongTensor(labels[0:split_num]))
     target_test = Variable(torch.LongTensor(labels[split_num:labels.shape[0]]))
 
-    model = model.SPDNetwork()
+    model = model.SPDNetwork_2()
 
     for _ in range(500):
         stime = datetime.datetime.now()
@@ -55,7 +57,7 @@ def SPD_experients(cov_data, labels):
         correct = pred.eq(target_train.data.view_as(pred)).long().cpu().sum()
         loss.backward()
         lr = 0.1
-        model.update_para(lr)
+        model.update_all_layers(lr)
         etime = datetime.datetime.now()
         dtime = etime.second - stime.second
 

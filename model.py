@@ -1,3 +1,11 @@
+##################################################################################################
+# FTL Draft Code for Subject-adaptive Analysis
+# Author：Ce Ju, Dashan Gao
+# Date  : July 29, 2020
+# Paper : Ce Ju et al., Federated Transfer Learning for EEG Signal Classification, IEEE EMBS 2020.
+# Description: Source domain inlcudes all good subjects, target domain is the bad subject.
+##################################################################################################
+
 import torch
 from torch.autograd import Variable
 import spd_net_util as util
@@ -6,69 +14,10 @@ import torch.nn.functional as F
 torch.manual_seed(0)
 
 
-class SPDNetwork(torch.nn.Module):
-
-    def __init__(self):
-        super(SPDNetwork, self).__init__()
-        self.w_1_p = Variable(torch.randn(32, 4).double(), requires_grad=True)
-        self.w_2_p = Variable(torch.randn(4, 4).double(), requires_grad=True)
-        self.w_3_p = Variable(torch.randn(4, 4).double(), requires_grad=True)
-        self.fc_w = Variable(torch.randn(16, 2).double(), requires_grad=True)
-
-    def forward(self, input):
-        batch_size = input.shape[0]
-        w_1_pc = self.w_1_p.contiguous()
-        w_1 = w_1_pc.view([1, w_1_pc.shape[0], w_1_pc.shape[1]])
-
-        w_2_pc = self.w_2_p.contiguous()
-        w_2 = w_2_pc.view([1, w_2_pc.shape[0], w_2_pc.shape[1]])
-
-        w_3_pc = self.w_3_p.contiguous()
-        w_3 = w_3_pc.view([1, w_3_pc.shape[0], w_3_pc.shape[1]])
-
-        w_tX = torch.matmul(torch.transpose(w_1, dim0=1, dim1=2), input)
-        w_tXw = torch.matmul(w_tX, w_1)
-        X_1 = util.rec_mat_v2(w_tXw)
-
-        w_tX = torch.matmul(torch.transpose(w_2, dim0=1, dim1=2), X_1)
-        w_tXw = torch.matmul(w_tX, w_2)
-        X_2 = util.rec_mat_v2(w_tXw)
-
-        w_tX = torch.matmul(torch.transpose(w_3, dim0=1, dim1=2), X_2)
-        w_tXw = torch.matmul(w_tX, w_3)
-        X_3 = util.log_mat_v2(w_tXw)
-
-        feat = X_3.view([batch_size, -1])  # [batch_size, d]
-        logits = torch.matmul(feat, self.fc_w)  # [batch_size, num_class]
-
-        return logits
-
-    def update_para(self, lr):
-        egrad_w1 = self.w_1_p.grad.data.numpy()
-        egrad_w2 = self.w_2_p.grad.data.numpy()
-        egrad_w3 = self.w_3_p.grad.data.numpy()
-        w_1_np = self.w_1_p.data.numpy()
-        w_2_np = self.w_2_p.data.numpy()
-        w_3_np = self.w_3_p.data.numpy()
-
-        new_w_3 = util.update_para_riemann(w_3_np, egrad_w3, lr)
-        new_w_2 = util.update_para_riemann(w_2_np, egrad_w2, lr)
-        new_w_1 = util.update_para_riemann(w_1_np, egrad_w1, lr)
-
-        self.w_1_p.data.copy_(torch.DoubleTensor(new_w_1))
-        self.w_2_p.data.copy_(torch.DoubleTensor(new_w_2))
-        self.w_3_p.data.copy_(torch.DoubleTensor(new_w_3))
-
-        self.fc_w.data -= lr * self.fc_w.grad.data
-        # Manually zero the gradients after updating weights
-        self.w_1_p.grad.data.zero_()
-        self.w_2_p.grad.data.zero_()
-        self.w_3_p.grad.data.zero_()
-        self.fc_w.grad.data.zero_()
-        # print('finished')
-
-
 class SPDNetwork_1(torch.nn.Module):
+    """
+    A sub-class of SPDNetwork with network structure of manifold reduction layers: [(32, 32), (32, 16), (16, 4)]
+    """
 
     def __init__(self):
         super(SPDNetwork_1, self).__init__()
@@ -79,10 +28,17 @@ class SPDNetwork_1(torch.nn.Module):
         self.fc_w = Variable(torch.randn(16, 2).double(), requires_grad=True)
 
     def forward(self, input):
+        """
+        Forward propagation
+        :param input:
+        :return:
+                output: the predicted probability of the model.
+                feat: feature in the common subspace for feature alignment.
+        """
         batch_size = input.shape[0]
 
         output = input
-        # # Forward propagation of local model
+        # Forward propagation of local model
         for idx, w in enumerate([self.w_1_p, self.w_2_p]):
             w = w.contiguous().view(1, w.shape[0], w.shape[1])
             w_tX = torch.matmul(torch.transpose(w, dim0=1, dim1=2), output)
@@ -101,15 +57,39 @@ class SPDNetwork_1(torch.nn.Module):
         output = F.log_softmax(logits, dim=-1)
         return output, feat
 
-    def update_para(self, lr):
-        update_para(lr, [self.w_1_p, self.w_2_p, self.w_3_p])
+    def update_all_layers(self, lr):
+        """
+        Update all layers for local single party training.
+        :param lr: learning rate
+        :return: None
+        """
+        update_manifold_reduction_layer(lr, [self.w_1_p, self.w_2_p, self.w_3_p])
+        self.fc_w.data -= lr * self.fc_w.grad.data
+        self.fc_w.grad.data.zero_()
 
-    def second_update_para(self, lr, average_grad):
+    def update_manifold_reduction_layer(self, lr):
+        """
+        Update the manifold reduction layers
+        :param lr: learning rate
+        :return: None
+        """
+        update_manifold_reduction_layer(lr, [self.w_1_p, self.w_2_p, self.w_3_p])
+
+    def update_federated_layer(self, lr, average_grad):
+        """
+        Update the federated layer.
+        :param lr: Learning rate
+        :param average_grad: the average gradient of the federated layer of all participants
+        :return: None
+        """
         self.fc_w.data -= lr * average_grad
         self.fc_w.grad.data.zero_()
 
 
 class SPDNetwork_2(torch.nn.Module):
+    """
+    A sub-class of SPDNetwork with network structure of manifold reduction layers: [(32, 4), (4, 4), (4, 4)]
+    """
     def __init__(self):
         super(SPDNetwork_2, self).__init__()
 
@@ -119,27 +99,24 @@ class SPDNetwork_2(torch.nn.Module):
         self.fc_w = Variable(torch.randn(16, 2).double(), requires_grad=True)
 
     def forward(self, input):
+        """
+        Forward propagation
+        :param input:
+        :return:
+                output: the predicted probability of the model.
+                feat: feature in the common subspace for feature alignment.
+        """
         batch_size = input.shape[0]
-        w_1_pc = self.w_1_p.contiguous()
-        w_1 = w_1_pc.view([1, w_1_pc.shape[0], w_1_pc.shape[1]])
+        output = input
+        # Forward propagation of local model
+        for idx, w in enumerate([self.w_1_p, self.w_2_p]):
+            w = w.contiguous().view(1, w.shape[0], w.shape[1])
+            w_tX = torch.matmul(torch.transpose(w, dim0=1, dim1=2), output)
+            w_tXw = torch.matmul(w_tX, w)
+            output = util.rec_mat_v2(w_tXw)
 
-        w_2_pc = self.w_2_p.contiguous()
-        w_2 = w_2_pc.view([1, w_2_pc.shape[0], w_2_pc.shape[1]])
-
-        w_3_pc = self.w_3_p.contiguous()
-        w_3 = w_3_pc.view([1, w_3_pc.shape[0], w_3_pc.shape[1]])
-
-        w_tX = torch.matmul(torch.transpose(w_1, dim0=1, dim1=2), input)
-        w_tXw = torch.matmul(w_tX, w_1)
-        X_1 = util.rec_mat_v2(w_tXw)
-        # X_1 = w_tXw
-
-        w_tX = torch.matmul(torch.transpose(w_2, dim0=1, dim1=2), X_1)
-        w_tXw = torch.matmul(w_tX, w_2)
-        X_2 = util.rec_mat_v2(w_tXw)
-        # X_2 = w_tXw
-
-        w_tX = torch.matmul(torch.transpose(w_3, dim0=1, dim1=2), X_2)
+        w_3 = self.w_3_p.contiguous().view([1, self.w_3_p.shape[0], self.w_3_p.shape[1]])
+        w_tX = torch.matmul(torch.transpose(w_3, dim0=1, dim1=2), output)
         w_tXw = torch.matmul(w_tX, w_3)
         X_3 = util.log_mat_v2(w_tXw)
 
@@ -148,70 +125,40 @@ class SPDNetwork_2(torch.nn.Module):
         output = F.log_softmax(logits, dim=-1)
         return output, feat
 
-    def update_para(self, lr):
-        update_para(lr, [self.w_1_p, self.w_2_p, self.w_3_p])
+    def update_all_layers(self, lr):
+        """
+        Update all layers for local single party training.
+        :param lr: learning rate
+        :return: None
+        """
+        update_manifold_reduction_layer(lr, [self.w_1_p, self.w_2_p, self.w_3_p])
+        self.fc_w.data -= lr * self.fc_w.grad.data
+        self.fc_w.grad.data.zero_()
 
-    def second_update_para(self, lr, average_grad):
+    def update_manifold_reduction_layer(self, lr):
+        """
+        Update the manifold reduction layers
+        :param lr: learning rate
+        :return: None
+        """
+        update_manifold_reduction_layer(lr, [self.w_1_p, self.w_2_p, self.w_3_p])
+
+    def update_federated_layer(self, lr, average_grad):
+        """
+        Update the federated layer.
+        :param lr: Learning rate
+        :param average_grad: the average gradient of the federated layer of all participants
+        :return: None
+        """
         self.fc_w.data -= lr * average_grad
         self.fc_w.grad.data.zero_()
 
 
-class SPDNetwork_3(torch.nn.Module):
-
-    def __init__(self):
-        super(SPDNetwork_3, self).__init__()
-
-        self.w_1_p = Variable(torch.randn(32, 4).double(), requires_grad=True)
-        self.w_3_p = Variable(torch.randn(4, 4).double(), requires_grad=True)
-        self.fc_w = Variable(torch.randn(16, 2).double(), requires_grad=True)
-
-    def forward(self, input):
-        batch_size = input.shape[0]
-        w_1_pc = self.w_1_p.contiguous()
-        w_1 = w_1_pc.view([1, w_1_pc.shape[0], w_1_pc.shape[1]])
-
-        w_3_pc = self.w_3_p.contiguous()
-        w_3 = w_3_pc.view([1, w_3_pc.shape[0], w_3_pc.shape[1]])
-
-        w_tX = torch.matmul(torch.transpose(w_1, dim0=1, dim1=2), input)
-        w_tXw = torch.matmul(w_tX, w_1)
-        X_1 = util.rec_mat_v2(w_tXw)
-        # X_1 = w_tXw
-
-        w_tX = torch.matmul(torch.transpose(w_3, dim0=1, dim1=2), X_1)
-        w_tXw = torch.matmul(w_tX, w_3)
-        X_3 = util.log_mat_v2(w_tXw)
-
-        feat = X_3.view([batch_size, -1])  # [batch_size, d]
-        logits = torch.matmul(feat, self.fc_w)  # [batch_size, num_class]
-
-        return logits, feat
-
-    def update_para(self, lr):
-        egrad_w1 = self.w_1_p.grad.data.numpy()
-        egrad_w3 = self.w_3_p.grad.data.numpy()
-        w_1_np = self.w_1_p.data.numpy()
-        w_3_np = self.w_3_p.data.numpy()
-
-        new_w_3 = util.update_para_riemann(w_3_np, egrad_w3, lr)
-        new_w_1 = util.update_para_riemann(w_1_np, egrad_w1, lr)
-
-        self.w_1_p.data.copy_(torch.DoubleTensor(new_w_1))
-        self.w_3_p.data.copy_(torch.DoubleTensor(new_w_3))
-
-        # self.fc_w.data -= lr * self.fc_w.grad.data
-        # Manually zero the gradients after updating weights
-        self.w_1_p.grad.data.zero_()
-        self.w_3_p.grad.data.zero_()
-
-        return self.fc_w.grad.data
-
-    def second_update_para(self, lr, average_grad):
-        self.fc_w.data -= lr * average_grad
-        self.fc_w.grad.data.zero_()
+# Define the SPDNetwork the same as SPDNetwork_2 for convenience.
+SPDNetwork = SPDNetwork_2
 
 
-def update_para(lr, params_list):
+def update_manifold_reduction_layer(lr, params_list):
     """
     Update parameters of the participant-specific parameters, here are [self.w_1_p, self.w_2_p, self.w_3_p]
     :param lr: learning rate

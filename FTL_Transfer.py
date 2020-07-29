@@ -1,7 +1,7 @@
 ##################################################################################################
 # FTL Draft Code for Subject-adaptive Analysis
-# Author：CE JU
-# Date  : April 20, 2020
+# Author：Ce Ju, Dashan Gao
+# Date  : July 29, 2020
 # Paper : Ce Ju et al., Federated Transfer Learning for EEG Signal Classification, IEEE EMBS 2020.
 # Description: Source domain inlcudes all good subjects, target domain is the bad subject.
 ##################################################################################################
@@ -18,10 +18,18 @@ warnings.filterwarnings('ignore')
 
 
 def transfer_SPD(cov_data_1, cov_data_2, labels_1, labels_2):
+    """
+    Train the proposed Federated Transfer Learning model over two participants.
+    :param cov_data_1: data of participant 1
+    :param cov_data_2: data of participant 2
+    :param labels_1: labels of participant 1
+    :param labels_2: labels of participant 2
+    :return: The final test accuracy of participant2, which is the target domain of the federated transfer learning.
+    """
+
     np.random.seed(0)
 
     # 1. Shuffle data
-
     cov_data_1, labels_1 = shuffle_data(cov_data_1, labels_1)
     cov_data_2, labels_2 = shuffle_data(cov_data_2, labels_2)
     print(cov_data_1.shape, cov_data_2.shape)
@@ -29,11 +37,9 @@ def transfer_SPD(cov_data_1, cov_data_2, labels_1, labels_2):
     # 2. Train test split
     train_data_1_num = cov_data_1.shape[0]
     cov_data_train_1 = cov_data_1[0:cov_data_1.shape[0], :, :]
-
     train_data_2_num = int(np.floor(cov_data_2.shape[0] * 0.8))
     cov_data_train_2 = cov_data_2[0:train_data_2_num, :, :]
     cov_data_test_2 = cov_data_2[train_data_2_num:cov_data_2.shape[0], :, :]
-
     print('split_num_for_test: ', train_data_2_num)
     print('rest_num_for_test: ', labels_2.shape[0] - train_data_2_num)
     print('-------------------------------------------------------')
@@ -70,19 +76,18 @@ def transfer_SPD(cov_data_1, cov_data_2, labels_1, labels_2):
         loss = F.nll_loss(output_1, target_train_1) + F.nll_loss(output_2, target_train_2) + \
                1 * mmd.forward(feat_1_positive, feat_2_positive) + \
                1 * mmd.forward(feat_1_negative, feat_2_negative)
-
         loss.backward()
 
         # 3. Update local model components.
-        model_1.update_para(lr_1)
-        model_2.update_para(lr_2)
+        model_1.update_manifold_reduction_layer(lr_1)
+        model_2.update_manifold_reduction_layer(lr_2)
 
         # 4. Compute the average of global component.
         average_grad = (model_1.fc_w.grad.data + model_2.fc_w.grad.data) / 2
 
         # 5. Update local model of each participant.
-        model_1.second_update_para(lr, average_grad)
-        model_2.second_update_para(lr, average_grad)
+        model_1.update_federated_layer(lr, average_grad)
+        model_2.update_federated_layer(lr, average_grad)
 
         # 6. Evaluate model performance
         if iteration % 1 == 0:
@@ -119,7 +124,7 @@ def transfer_SPD(cov_data_1, cov_data_2, labels_1, labels_2):
     return test_accuracy_2
 
 
-def load_data(data_file, label_file):
+def load_data(data_file, label_file, good_subjects, bad_subject):
     """
     Load data training data
     :param data_file: training samples of all subjects
@@ -128,17 +133,14 @@ def load_data(data_file, label_file):
     """
     data = np.load(data_file)
     label = np.load(label_file)
-    GOOD_SUBJECT_IDS = [0, 1, 6, 7, 14, 28, 30, 32, 33, 34, 41, 47, 51, 53, 54, 55, 59, 61, 69, 70, 71, 72,
-                        79, 84, 85, 92, 99, 103]
-    BAD_SUBJECT_ID = 100
 
     # Good Subjects
-    good_subj_data = np.concatenate(data[GOOD_SUBJECT_IDS], axis=0)
-    good_subj_label = np.concatenate(label[GOOD_SUBJECT_IDS], axis=0)
+    good_subj_data = np.concatenate(data[good_subjects], axis=0)
+    good_subj_label = np.concatenate(label[good_subjects], axis=0)
 
     # Bad Subject
-    bad_subj_data = data[BAD_SUBJECT_ID]
-    bad_subj_label = label[BAD_SUBJECT_ID]
+    bad_subj_data = data[bad_subject]
+    bad_subj_label = label[bad_subject]
 
     return good_subj_data, good_subj_label, bad_subj_data, bad_subj_label
 
@@ -175,9 +177,14 @@ if __name__ == '__main__':
 
     np.random.seed(0)
 
+    GOOD_SUBJECT_IDS = [0, 1, 6, 7, 14, 28, 30, 32, 33, 34, 41, 47, 51, 53, 54, 55, 59, 61, 69, 70, 71, 72,
+                        79, 84, 85, 92, 99, 103]
+    BAD_SUBJECT_ID = 100
+
     # Load data of good subjects and bad subjects.
     good_subj_data, good_subj_label, bad_subj_data, bad_subj_label = \
-        load_data('raw_data/normalized_original_train_sample.npy', 'raw_data/train_label.npy')
+        load_data('raw_data/normalized_original_train_sample.npy', 'raw_data/train_label.npy',
+                  GOOD_SUBJECT_IDS, BAD_SUBJECT_ID)
 
     accuracy_recorder = []
     for _ in range(10):
