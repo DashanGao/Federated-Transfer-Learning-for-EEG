@@ -44,8 +44,6 @@ class SPDNetwork_1(torch.nn.Module):
             w_tX = torch.matmul(torch.transpose(w, dim0=1, dim1=2), output)
             w_tXw = torch.matmul(w_tX, w)
             output = util.rec_mat_v2(w_tXw)
-        print(self.w_1_p.data[0, :4])
-        print(self.w_2_p.data[0, :4])
 
         w_3 = self.w_3_p.contiguous().view([1, self.w_3_p.shape[0], self.w_3_p.shape[1]])
         w_tX = torch.matmul(torch.transpose(w_3, dim0=1, dim1=2), output)
