@@ -76,7 +76,7 @@ different biomedical data with privacy protection and good performance. The FTL 
 
 ---
 
-# Cite Us
+## Cite Us
 
 For detailed information about our work, please refer to our paper published in 42nd Annual International Conferences 
 of the IEEE Engineering in Medicine and Biology Society in conjunction with the 43rd Annual Conference of the Canadian 
