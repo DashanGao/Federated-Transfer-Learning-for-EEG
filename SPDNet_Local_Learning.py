@@ -62,7 +62,6 @@ def SPD_experients(cov_data, labels):
 
     logits = model(input_data_test)
     output = F.log_softmax(logits, dim=-1)
-    loss = F.nll_loss(output, target_test)
     pred = output.data.max(1, keepdim=True)[1]
     correct_test = pred.eq(target_test.data.view_as(pred)).long().cpu().sum()
     return correct_test.item() / pred.shape[0]
@@ -76,24 +75,15 @@ if __name__ == '__main__':
     label = np.load('raw_data/train_label.npy')
     index = np.load('raw_data/index.npy')
 
-    # good_subject_index =[0, 1, 6, 7, 14, 28, 30, 32, 33, 34, 41, 47, 51, 53, 54, 55, 59, 61, 69, 70, 71, 72, 79, 84, 85, 92, 103]
-    # cov_data_good = np.concatenate(data[good_subject_index], axis=0)
-    # labels_good = np.concatenate(label[good_subject_index], axis=0)
-    # epochs_data_train_good = np.concatenate(epoch_data_train[good_subject_index], axis=0)
-
     FULL_MDM = []
     FULL_FGMDM = []
     FULL_TSC = []
     FULL_CSP_lr = []
     FULL_CSP_svm = []
 
-    # for bad_subject_index in [2, 8, 16, 17, 22, 23, 27, 35, 37, 38, 39, 40, 44, 46, 57, 62, 63, 66, 73, 75, 76, 77, 89, 95, 96, 98, 100, 101]:
     for bad_subject_index in range(108):
         # bad_subject_index = [2, 8, 16, 17, 22, 23, 27, 35, 37, 38, 39, 40, 44, 46, 57, 62, 63, 66, 73, 75, 76, 77, 89, 95, 96, 98, 100, 101]
         # bad_subject_index = 2
-        # cov_data_bad = np.concatenate(data[bad_subject_index], axis=0)
-        # labels_bad = np.concatenate(label[bad_subject_index], axis=0)
-        # epochs_data_train_bad = np.concatenate(epoch_data_train[bad_subject_index], axis=0)
         cov_data_bad = data[bad_subject_index]
         labels_bad = label[bad_subject_index]
         epochs_data_train_bad = epoch_data_train[bad_subject_index]
