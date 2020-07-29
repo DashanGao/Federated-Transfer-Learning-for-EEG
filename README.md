@@ -76,6 +76,8 @@ different biomedical data with privacy protection and good performance. The FTL 
 
 ---
 
+# Cite Us
+
 For detailed information about our work, please refer to our paper published in 42nd Annual International Conferences 
 of the IEEE Engineering in Medicine and Biology Society in conjunction with the 43rd Annual Conference of the Canadian 
 Medical and Biological Engineering Society (EMBS)
@@ -95,6 +97,8 @@ If this project helps you in your research, please cite our work in your paper.
 ```
 
 ---
+
+## Authors
 
 This work is conducted by Hong Kong University of Science and Technology (HKUST), Southern University of Science and Technology (SUSTech), WeBank Co. Ltd. and Nanyang Technology University (NTU).
 
