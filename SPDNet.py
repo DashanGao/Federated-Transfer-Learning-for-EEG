@@ -1,9 +1,9 @@
 ##################################################################################################
-# FTL Draft Code for Subject-adaptive Analysis
+# SPDNet model definition
 # Author：Ce Ju, Dashan Gao
 # Date  : July 29, 2020
 # Paper : Ce Ju et al., Federated Transfer Learning for EEG Signal Classification, IEEE EMBS 2020.
-# Description: Source domain inlcudes all good subjects, target domain is the bad subject.
+# Description: Source domain includes all good subjects, target domain is the bad subject.
 ##################################################################################################
 
 import torch
@@ -43,12 +43,12 @@ class SPDNetwork_1(torch.nn.Module):
             w = w.contiguous().view(1, w.shape[0], w.shape[1])
             w_tX = torch.matmul(torch.transpose(w, dim0=1, dim1=2), output)
             w_tXw = torch.matmul(w_tX, w)
-            output = util.rec_mat_v2(w_tXw)
+            output = util.rec_mat(w_tXw)
 
         w_3 = self.w_3_p.contiguous().view([1, self.w_3_p.shape[0], self.w_3_p.shape[1]])
         w_tX = torch.matmul(torch.transpose(w_3, dim0=1, dim1=2), output)
         w_tXw = torch.matmul(w_tX, w_3)
-        X_3 = util.log_mat_v2(w_tXw)
+        X_3 = util.log_mat(w_tXw)
 
         feat = X_3.view([batch_size, -1])  # [batch_size, d]
         logits = torch.matmul(feat, self.fc_w)  # [batch_size, num_class]
@@ -111,12 +111,12 @@ class SPDNetwork_2(torch.nn.Module):
             w = w.contiguous().view(1, w.shape[0], w.shape[1])
             w_tX = torch.matmul(torch.transpose(w, dim0=1, dim1=2), output)
             w_tXw = torch.matmul(w_tX, w)
-            output = util.rec_mat_v2(w_tXw)
+            output = util.rec_mat(w_tXw)
 
         w_3 = self.w_3_p.contiguous().view([1, self.w_3_p.shape[0], self.w_3_p.shape[1]])
         w_tX = torch.matmul(torch.transpose(w_3, dim0=1, dim1=2), output)
         w_tXw = torch.matmul(w_tX, w_3)
-        X_3 = util.log_mat_v2(w_tXw)
+        X_3 = util.log_mat(w_tXw)
 
         feat = X_3.view([batch_size, -1])  # [batch_size, d]
         logits = torch.matmul(feat, self.fc_w)  # [batch_size, num_class]
