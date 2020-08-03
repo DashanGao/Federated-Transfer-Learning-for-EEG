@@ -59,7 +59,7 @@ The SPD-Net part is originally from https://github.com/YirongMao/SPDNet
 ### Data pre-processing
 
 Please put your training data and labels into a directory "raw_data/" in this project.
-The package `mne` is adopted for EEG data pro-processing. To generate the required data as SPDNet input, please refer to the following code:
+The package `mne` is adopted for EEG data pro-processing. To generate the required data as SPDNet input, please refer to the following example code: 
 
 ```python        
 from mne import Epochs, pick_types, events_from_annotations
@@ -113,7 +113,7 @@ epochs_data_train = 1e6 * epochs.get_data()
 
 # compute covariance matrices
 cov_data_train = Covariances().transform(epochs_data_train)
-```
+```Y
 
 ### Model training
 
