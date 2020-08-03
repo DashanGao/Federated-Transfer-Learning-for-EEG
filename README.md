@@ -113,7 +113,7 @@ epochs_data_train = 1e6 * epochs.get_data()
 
 # compute covariance matrices
 cov_data_train = Covariances().transform(epochs_data_train)
-```Y
+```
 
 ### Model training
 
