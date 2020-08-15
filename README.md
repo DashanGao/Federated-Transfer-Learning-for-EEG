@@ -9,7 +9,7 @@ July 20-24, 2020 via the EMBS Virtual Academy
 ---
 
 ## Acknowledgement
-Great thanks to great geometers including Bernhard Riemann, Shiing-Shen Chern, Shing-Tung Yau etc. We see the world differently because of your contribution.
+Great thanks to great geometers including Bernhard Riemann, Shiing-Shen Chern, Shing-Tung Yau etc. We see the world differently because of your noble contributions.
 
 ## Introduction
 
