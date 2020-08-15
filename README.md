@@ -8,6 +8,9 @@ July 20-24, 2020 via the EMBS Virtual Academy
 
 ---
 
+## Acknowledgement
+Great thanks to great geometers including Bernhard Riemann, Shiing-Shen Chern, Shing-Tung Yau etc.
+
 ## Introduction
 
 <!--- ![Federated Learning](https://github.com/DashanGao/Federated-Transfer-Leraning-for-EEG/blob/master/imgs/federated_learning.png =250*250)![Federated Learning EEG](https://github.com/DashanGao/Federated-Transfer-Leraning-for-EEG/blob/master/imgs/federated_learning_eeg.png =250*250) --->
