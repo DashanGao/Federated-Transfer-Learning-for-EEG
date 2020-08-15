@@ -9,7 +9,7 @@ July 20-24, 2020 via the EMBS Virtual Academy
 ---
 
 ## Acknowledgement
-Great thanks to great geometers including Bernhard Riemann, Shiing-Shen Chern, Shing-Tung Yau etc.
+Great thanks to great geometers including Bernhard Riemann, Shiing-Shen Chern, Shing-Tung Yau etc. We see the world differently because of your contribution.
 
 ## Introduction
 
@@ -47,6 +47,7 @@ which is a local linear approximation of the curved space.
 
 4. **Federated layer**: Deep neural networks are implemented in this layer. For the transfer learning setting, 
 parameters of neural networks are updated by the federated aggregation.
+
 
 ---
 
