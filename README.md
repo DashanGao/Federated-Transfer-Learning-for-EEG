@@ -139,6 +139,16 @@ different biomedical data with privacy protection and good performance. The FTL 
 
 ---
 
+## Conlusions
+We apply federated learning framework to build BCI models from multiple subjects with heterogeneous distributions.
+1. FTL preserves user **privacy** by keeping EEG data of each subject on-device.
+2. FTL achieves 6% better accuracy than other state-of-the-art DL methods in EEG-MI task, by using **spatial covariance matrix** as an input.
+3. FTL achieves the best classification accuracy over bad subjects via **transfer learning**.
+
+
+---
+
+
 ## Cite Us
 
 For detailed information about our work, please refer to our paper published in 42nd Annual International Conferences 
