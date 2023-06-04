@@ -12,50 +12,32 @@ July 20-24, 2020 via the EMBS Virtual Academy
 
 <!--- ![Federated Learning](https://github.com/DashanGao/Federated-Transfer-Leraning-for-EEG/blob/master/imgs/federated_learning.png =250*250)![Federated Learning EEG](https://github.com/DashanGao/Federated-Transfer-Leraning-for-EEG/blob/master/imgs/federated_learning_eeg.png =250*250) --->
 
-The success of deep learning (DL) methods in the Brain-Computer Interfaces (BCI) field for classification of 
-electroencephalographic (EEG) recordings have been restricted by the lack of large datasets. Privacy concerns 
-associated with the EEG signals limit the possibility to construct a large EEG- BCI datasets by the conglomeration of 
-multiple small ones for jointly training the machine learning model. Hence, in this paper, we propose a novel 
-privacy-preserving DL architecture named federated transfer learning (FTL) for EEG classification that is based on the 
-federated learning framework. Working with the single-trial covariance matrix, the proposed architecture extracts common 
-discriminative information from multi-subject EEG data with the help of domain adaption techniques. We evaluate 
-the performance of the proposed architecture on the PhysioNet dataset for 2-class motor imagery classification. 
-While avoiding the actual data sharing, our FTL approach achieves 2% higher classification accuracy in a 
-subject-adaptive analysis. Also, in the absence of multi-subject data, our architecture provides 6% better accuracy 
-compared to other state-of-the-art DL architectures.
+The impact of deep learning (DL) methodologies within the sphere of Brain-Computer Interfaces (BCI) for the categorization of electroencephalographic (EEG) transcriptions has been stymied by the dearth of expansive datasets. Constraints linked to privacy concerns surrounding EEG signals impede the creation of large EEG-BCI datasets through the amalgamation of various smaller datasets for the shared training of the machine learning model. Consequently, this paper presents a novel privacy-preserving DL framework named federated transfer learning (FTL) for EEG categorization, which is predicated on the federated learning structure. Utilizing the single-trial covariance matrix, this proposed framework extracts common discriminative information from multi-subject EEG data via domain adaptation techniques. The effectiveness of the proposed framework is assessed against the PhysioNet dataset for a two-class motor imagery classification. All while circumventing direct data sharing, our FTL method attains a 2% improvement in classification accuracy in a subject-adaptive analysis. Moreover, when multi-subject data is not available, our framework delivers a 6% increase in accuracy in comparison to other leading-edge DL frameworks.
 
 ---
 
 ## Network Architecture
 
-Our proposed architecture consists of following 4 layers:
-manifold reduction layer, common embedded space, tangent projection layer and federated layer. 
-The purpose of each layer is as follows:
 
-1. **Manifold reduction layer**: Spatial covariance matrices are always assumed to be on the high-dimensional 
-SPD manifolds. This layer is the linear map from the high-dimensional SPD manifold to the low-dimensional one 
-with undetermined weights for learning.
+Our proposed architecture comprises the following four layers: the manifold reduction layer, the common embedded space, the tangent projection layer, and the federated layer. The function of each layer is detailed below:
 
-2. **Common embedded space**: The common space is the low-dimensional SPD manifold whose elements are reduced from 
-each high-dimensional SPD manifolds, which is designed only for the transfer learning setting.
+1. **Manifold Reduction Layer**: Spatial covariance matrices are consistently presumed to inhabit high-dimensional Symmetric Positive Definite (SPD) manifolds. This layer acts as a linear map from the high-dimensional SPD manifold to the low-dimensional counterpart, with undefined weights reserved for learning.
 
-3. **Tangent projection layer**: This layer is to project the matrices on SPD manifolds to its tangent space, 
-which is a local linear approximation of the curved space.
+2. **Common Embedded Space**: The common space is the low-dimensional SPD manifold, whose elements are diminished from each high-dimensional SPD manifold. It is specifically designed for the transfer learning setting.
 
-4. **Federated layer**: Deep neural networks are implemented in this layer. For the transfer learning setting, 
-parameters of neural networks are updated by the federated aggregation.
+3. **Tangent Projection Layer**: The function of this layer is to project the matrices on SPD manifolds to its tangent space, which is a local linear approximation of the curved space.
+
+4. **Federated Layer**: Deep neural networks are implemented in this layer. For the transfer learning setting, the parameters of neural networks are updated by federated aggregation.
 
 
 ---
 
-## How To Run The Code
+### How To Run The Code
 
-Please install pyRiemann and mne
-
-pyRiemann: https://github.com/alexandrebarachant/pyRiemann
-mne: https://github.com/mne-tools/mne-python
-
-The SPD-Net part is originally from https://github.com/YirongMao/SPDNet
+We extend our gratitude to the open-source community, which facilitates the wider dissemination of the work of other researchers as well as our own. The coding style in this repo is relatively rough. We welcome anyone to refactor it to make it more effective. The codebase for our models builds heavily on the following repositories:
+[<img src="https://img.shields.io/badge/GitHub-pyRiemann-b31b1b"></img>](https://github.com/pyRiemann/pyRiemann) 
+[<img src="https://img.shields.io/badge/GitHub-SPDNet(Z.W.Huang)-b31b1b"></img>](https://github.com/zhiwu-huang/SPDNet)
+[<img src="https://img.shields.io/badge/GitHub-mne-b31b1b"></img>](https://github.com/mne-tools/mne-python)
 
 ### Data pre-processing
 
@@ -126,32 +108,28 @@ For subject-specific analysis, run `SPDNet_Local_Learning.py`
 
 ## Federated Transfer Learning Framework for Biomedical Applications
 
-We developed a federated transfer learning framework for various biomedical applications.
-The FTL framework adopts several federated learning frameworks such as FATE and pyTorch. 
-It supports biomedical machine learning tasks with different types of data.
-We believe the FTL framework provides an easy-to-learn tool for researchers to study machine learning tasks of 
-different biomedical data with privacy protection and good performance. The FTL framework will be open-sourced soon. 
+We have engineered a Federated Transfer Learning (FTL) framework designed for a range of biomedical applications. The FTL framework incorporates various federated learning architectures including FATE and PyTorch, and it caters to biomedical machine learning tasks involving diverse types of data. We posit that the FTL framework offers a user-friendly tool for researchers to explore machine learning tasks pertaining to various biomedical data types, while ensuring privacy protection and superior performance. We intend to open-source the FTL framework in the near future.
 
 ![Federated Transfer Learning Framework architecture](https://github.com/DashanGao/Federated-Transfer-Leraning-for-EEG/blob/master/imgs/ftl_framework.png)
 
 ---
 
 ## Contributions
-We apply federated learning framework to build BCI models from multiple subjects with heterogeneous distributions.
-1. FTL preserves user **privacy** by keeping EEG data of each subject on-device.
-2. FTL achieves 6% better accuracy than other state-of-the-art DL methods in EEG-MI task, by using **spatial covariance matrix** as an input.
-3. FTL achieves the best classification accuracy over bad subjects via **transfer learning**.
 
+We implement a federated learning framework to construct BCI models from multiple subjects with heterogeneous distributions. Key advantages of our Federated Transfer Learning (FTL) approach include:
+
+1. **Privacy**: FTL preserves user privacy by retaining the EEG data of each subject on-device, preventing any potential data leaks.
+2. **Spatial Covariance Matrix Utilization**: By using the spatial covariance matrix as an input, FTL surpasses other state-of-the-art deep learning methods in EEG-MI tasks, resulting in a 6% increase in accuracy.
+3. **Transfer Learning**: FTL leverages transfer learning to attain superior classification accuracy, even for subjects whose EEG signals might be considered 'bad' or challenging to interpret.
+
+The major contribution of this study lies in reporting promising trial results within specific scenarios. However, due to the relatively small number of trials per subject in the test dataset, the classification results exhibit considerable randomness. Under varying datasets, tasks, and division methods, our approach will yield differing performances. Hence, we suggest users to fine-tune parameters and network structures according to their own contexts in order to attain optimal results.
 
 ---
 
 
 ## Cite Us
 
-For detailed information about our work, please refer to our paper published in 42nd Annual International Conferences 
-of the IEEE Engineering in Medicine and Biology Society in conjunction with the 43rd Annual Conference of the Canadian 
-Medical and Biological Engineering Society (EMBS)
-July 20-24, 2020 via the EMBS Virtual Academy: 
+For an in-depth insight into our work, we kindly direct you to our paper presented at the 42nd Annual International Conferences of the IEEE Engineering in Medicine and Biology Society, held in conjunction with the 43rd Annual Conference of the Canadian Medical and Biological Engineering Society (EMBS), which took place between July 20-24, 2020, through the EMBS Virtual Academy:
 
 [Federated Transfer Learning for EEG Signal Classification](https://arxiv.org/abs/2004.12321)
 
@@ -175,7 +153,7 @@ The fundamental neural network structure currently utilized for transfer learnin
 
 ## Authors
 
-This work is conducted by Hong Kong University of Science and Technology (HKUST), Southern University of Science and Technology (SUSTech), WeBank Co. Ltd. and Nanyang Technology University (NTU).
+This research was undertaken by a collaborative team from the Hong Kong University of Science and Technology, the Southern University of Science and Technology, WeBank Co. Ltd., and Nanyang Technological University.
 
 ![Institution Logo](https://github.com/DashanGao/Federated-Transfer-Leraning-for-EEG/blob/master/imgs/institution_logo.png)
 
