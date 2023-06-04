@@ -172,7 +172,7 @@ If this project helps you in your research, please cite our work in your paper.
 
 ## Follow-up Works
 
-The fundamental neural network structure currently utilized for transfer learning is a second-order neural network structure. In our follow-up work, we further developed this network structure, proposing several geometric BCI classifiers. If you are interested in our follow-up work, please proceed to the following URL:https://github.com/GeometricBCI/Tensor-CSPNet-and-Graph-CSPNet
+The fundamental neural network structure currently utilized for transfer learning is a second-order neural network structure. In our follow-up work, we further developed this network structure, proposing several geometric BCI classifiers. If you are interested in our follow-up work, please proceed to the following URL:https://github.com/GeometricBCI/Tensor-CSPNet-and-Graph-CSPNet These geometric BCI classifiers, inspired by differential geometry, have achieved state-of-the-art results in subject-specific scenarios across multiple motor imagery datasets.
 
 ---
 
